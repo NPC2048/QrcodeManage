@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: 2code
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    default-property-inclusion: non_null
+    property-naming-strategy: SNAKE_CASE
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles:
+    active: dev
+  security:
+    user:
+      name: admin
+      password: Admin123456@qq.com
+mybatis-plus:
+  global-config:
+    db-config:
+      # id ¿‡–Õ, Œ®“ª id
+      id-type: id_worker
+  configuration:
+    map-underscore-to-camel-case: true
+    use-actual-param-name: true
+    cache-enabled: false
