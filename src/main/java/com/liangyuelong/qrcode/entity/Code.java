@@ -13,9 +13,14 @@ public class Code {
     private Long id;
 
     /**
-     * 用户名
+     * 关联的用户id
      */
-    private String user;
+    private Long userId;
+
+    /**
+     * 二维码内容
+     */
+    private String content;
 
     /**
      * 二维码被查看次数
@@ -24,7 +29,15 @@ public class Code {
 
     private String address;
 
+    private Long addressId;
+
+    /**
+     * 二维码名称
+     */
     private String name;
 
+    /**
+     * 二维码信息
+     */
     private String info;
 }

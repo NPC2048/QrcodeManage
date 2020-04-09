@@ -1,5 +1,6 @@
 package com.liangyuelong.qrcode.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -15,7 +16,8 @@ import java.util.Date;
 public class User {
     private Long id;
 
-    private String user;
+    @TableField("user")
+    private String username;
 
     private String password;
 

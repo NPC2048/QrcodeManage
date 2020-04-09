@@ -3,12 +3,18 @@ spring:
     name: 2code
   main:
     allow-bean-definition-overriding: true
+  # jackson 解析 json 配置
   jackson:
+    # 为 null 的属性不转换
     default-property-inclusion: non_null
+    # 驼峰与下划线互转
     property-naming-strategy: SNAKE_CASE
+    # 默认日期格式
     date-format: yyyy-MM-dd HH:mm:ss
+  # 环境配置, 默认为开发环境
   profiles:
     active: dev
+  # spring security 配置
   security:
     user:
       name: admin
@@ -16,9 +22,13 @@ spring:
 mybatis-plus:
   global-config:
     db-config:
-      # id ����, Ψһ id
+      # id 类型, 唯一 id
       id-type: id_worker
+      table-prefix: 2code
   configuration:
+    # 实体类与数据库字段映射：驼峰与下划线互相转换, 满足规则的字段不需要 @TableFiled 注明数据库字段
     map-underscore-to-camel-case: true
+    # mapper 方法参数不需要用 @Param 注明参数名
     use-actual-param-name: true
+    # 禁用缓存
     cache-enabled: false
