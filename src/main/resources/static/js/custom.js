@@ -1,7 +1,7 @@
 'use strict';
 
 //需要改为你的服务器网址
-var base_url = '//localhost/dist';
+var base_url = '//localhost:8091';
 
 (function ($) {
 
@@ -261,50 +261,29 @@ function add_code () {
 function login () {
     var u = $('#user_g').val();
     var p = $('#password_g').val();
-    $.ajax({
-        url: base_url + '/php/login.php',
-        data: 'u=' + u + '&p=' + p,
-        success: function success (msg) {
-            var data = JSON.parse(msg);
-            if (data.code == '1') {
-                console.log('ok');
-                localStorage.u = data.user;
-                $('#modal-form').modal('hide');
-                $('.user').show();
-                $('.un_user').hide();
-                $('.user_name').text(localStorage.u);
-                menu();
-                $('#login_info').html(' ');
-            } else {
-                $('#login_info').html('账号密码错误!');
-            }
+    $.post(base_url + '/login', {username: u, password: p}, function (r) {
+        console.log(r);
+        if (!r.state) {
+            return swal(r.msg);
         }
-
     });
 }
 
 function register () {
     var u = $('#user_gr').val() || 'test';
     var p = $('#password_gr').val() || 'test';
-    $.ajax({
-        url: base_url + '/php/register.php',
-        data: 'u=' + u + '&p=' + p,
-        success: function success (msg) {
-            var data = JSON.parse(msg);
-            if (data.code == '1') {
-                console.log('ok');
-                localStorage.u = data.user;
-                $('#modal-form-register').modal('hide');
-                $('.user').show();
-                $('.un_user').hide();
-                $('.user_name').text(localStorage.u);
-                $('#register_info').html(' ');
-                menu();
-            } else {
-                $('#register_info').html('注册失败!');
-            }
+    $.post(base_url + '/register', {username: u, password: p}, (r)=> {
+        if (!r.state) {
+            return swal(r.msg);
         }
-
+        swal('注册成功');
+        // 打开登录模态框
+        $('#modal-form-register').modal('hide');
+        $('.user').show();
+        $('.un_user').hide();
+        $('.user_name').text(localStorage.u);
+        $('#register_info').html(' ');
+        menu();
     });
 }
 

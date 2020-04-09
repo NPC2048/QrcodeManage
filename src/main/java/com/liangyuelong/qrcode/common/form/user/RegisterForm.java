@@ -18,7 +18,7 @@ public class RegisterForm extends LoginForm {
     /**
      * 确认密码
      */
-    @NotBlank(message = "确认密码不能为空")
+//    @NotBlank(message = "确认密码不能为空")
     @Length(min = 6, max = 15, message = "密码长度不能小于 6 位且不能大于 15 位")
     private String confirmPassword;
 

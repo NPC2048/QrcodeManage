@@ -23,7 +23,7 @@ mybatis-plus:
   global-config:
     db-config:
       # id 类型, 唯一 id
-      id-type: id_worker
+      id-type: auto
       table-prefix: 2code
   configuration:
     # 实体类与数据库字段映射：驼峰与下划线互相转换, 满足规则的字段不需要 @TableFiled 注明数据库字段

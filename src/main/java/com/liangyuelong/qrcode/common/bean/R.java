@@ -19,9 +19,12 @@ public class R {
 
     public static final R FAILED;
 
+    public static final R NO_LOGIN;
+
     static {
         SUCCESS = new R(ResultEnum.SUCCESS);
         FAILED = new R(ResultEnum.FAILED);
+        NO_LOGIN = new R(ResultEnum.NO_LOGIN);
     }
 
     protected byte state;

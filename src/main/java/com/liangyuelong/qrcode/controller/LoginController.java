@@ -8,15 +8,16 @@ import com.liangyuelong.qrcode.common.form.user.LoginForm;
 import com.liangyuelong.qrcode.common.form.user.RegisterForm;
 import com.liangyuelong.qrcode.entity.User;
 import com.liangyuelong.qrcode.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Date;
 
 /**
  * 登錄處理 controller
@@ -24,7 +25,6 @@ import javax.validation.Valid;
  * @author yuelong.liang
  */
 @RestController
-@Slf4j
 @Log
 public class LoginController {
 
@@ -34,13 +34,27 @@ public class LoginController {
     @Resource
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * 用户注册
+     *
+     * @param form 表单
+     * @return R
+     */
     @PostMapping("/register")
     public R register(@Valid RegisterForm form) {
+        User user = new User();
+        user.setUsername(form.getUsername());
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        user.setContent("");
+        user.setTime(new Date());
+        this.userService.save(user);
         return R.SUCCESS;
     }
 
-    @RequestMapping("/login")
-    public R login(@Valid LoginForm form) {
+    @PostMapping("/login")
+    public R login(HttpSession session, @Valid LoginForm form) {
+        System.out.println(session.getId());
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
         User user = userService.getOne(new QueryWrapper<User>().eq("user", form.getUsername()));
         if (user == null) {
             throw new NoLogException("该用户不存在");
@@ -49,7 +63,9 @@ public class LoginController {
         if (!passwordEncoder.matches(form.getPassword(), user.getPassword())) {
             throw new NoLogException("密码错误");
         }
-        SecurityContextHolder.getContext().getAuthentication();
+        // 登录成功, 放入容器
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), null);
+        SecurityContextHolder.getContext().setAuthentication(token);
         return R.SUCCESS;
     }
 
