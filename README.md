@@ -24,7 +24,11 @@
 2. 在项目根目录运行命令:
 > mvn spring-boot:run -Dspring-boot.run.profiles=prod
 
-spring-boot.run.profiles 如果不指定则默认为 dev, 默认值可以在 application.yml 中修改 
+spring-boot.run.profiles 如果不指定则默认为 dev, 默认值可以在 application.yml 中修改
+
+###### Docker 部署
+
+ 
 
 ###### 演示地址: [http://www.liangyuelong.com:8888](http://www.liangyuelong.com:8888)
 
