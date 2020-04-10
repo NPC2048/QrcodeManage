@@ -1,6 +1,5 @@
 package com.liangyuelong.qrcode.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liangyuelong.qrcode.aop.annotation.Log;
 import com.liangyuelong.qrcode.common.NoLogException;
 import com.liangyuelong.qrcode.common.bean.R;
@@ -15,9 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Date;
 
 /**
  * 登錄處理 controller
@@ -42,20 +39,18 @@ public class LoginController {
      */
     @PostMapping("/register")
     public R register(@Valid RegisterForm form) {
-        User user = new User();
-        user.setUsername(form.getUsername());
-        user.setPassword(passwordEncoder.encode(form.getPassword()));
-        user.setContent("");
-        user.setTime(new Date());
-        this.userService.save(user);
+        // 查询用户是否存在
+        User user = userService.getByUsername(form.getUsername());
+        if (user != null) {
+            throw new NoLogException("该用户名已存在");
+        }
+        userService.register(form);
         return R.SUCCESS;
     }
 
     @PostMapping("/login")
-    public R login(HttpSession session, @Valid LoginForm form) {
-        System.out.println(session.getId());
-        System.out.println(SecurityContextHolder.getContext().getAuthentication());
-        User user = userService.getOne(new QueryWrapper<User>().eq("user", form.getUsername()));
+    public R login(@Valid LoginForm form) {
+        User user = userService.getByUsername(form.getUsername());
         if (user == null) {
             throw new NoLogException("该用户不存在");
         }

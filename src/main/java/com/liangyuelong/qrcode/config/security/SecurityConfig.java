@@ -9,11 +9,16 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * spring security 配置
@@ -49,14 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler((request, response, e) -> ResponseUtils.json(response, R.failed("登录失败")))
                 .loginProcessingUrl("/loginSuccess")
                 .usernameParameter("username").passwordParameter("password").permitAll()
-                .and().logout().permitAll()
-                .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+                .and().logout().logoutSuccessHandler((request, response, e) -> ResponseUtils.json(response, R.success("退出登录")))
+                .and().exceptionHandling().authenticationEntryPoint((request, response, e) -> ResponseUtils.json(response, R.NO_LOGIN))
         ;
     }
 
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        return (request, response, e) -> {
-            ResponseUtils.json(response, R.NO_LOGIN);
-        };
-    }
 }

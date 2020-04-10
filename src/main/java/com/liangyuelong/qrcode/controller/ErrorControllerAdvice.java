@@ -6,6 +6,7 @@ import com.liangyuelong.qrcode.common.bean.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -38,6 +39,11 @@ public class ErrorControllerAdvice {
     public R bizException(BizException e) {
         log.info(ExceptionUtils.getStackTrace(e));
         return R.failed(e.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public R httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return R.failed("请求方法不支持:" + e.getMethod());
     }
 
     /**

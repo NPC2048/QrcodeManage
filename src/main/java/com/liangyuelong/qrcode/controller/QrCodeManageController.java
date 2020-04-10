@@ -1,7 +1,12 @@
 package com.liangyuelong.qrcode.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.liangyuelong.qrcode.aop.annotation.Log;
 import com.liangyuelong.qrcode.common.bean.R;
+import com.liangyuelong.qrcode.common.form.code.CodePageForm;
+import com.liangyuelong.qrcode.entity.Code;
 import com.liangyuelong.qrcode.service.CodeService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +23,7 @@ import javax.validation.constraints.NotNull;
  */
 @RestController
 @RequestMapping("/manage")
+@Log
 public class QrCodeManageController {
 
     @Resource
@@ -29,8 +35,18 @@ public class QrCodeManageController {
      * @return R
      */
     @GetMapping("/search")
-    public R search() {
-        return R.SUCCESS;
+    public R search(CodePageForm form) {
+        QueryWrapper<Code> wrapper = new QueryWrapper<>();
+        if (StringUtils.isNotEmpty(form.getName())) {
+            wrapper.like("name", form.getName());
+        }
+        if (form.getUserId() != null) {
+            wrapper.eq("user_id", form.getUserId());
+        }
+        if (StringUtils.isNotEmpty(form.getContent())) {
+            wrapper.like("content", form.getContent());
+        }
+        return R.success(codeService.page(form, wrapper));
     }
 
     /**
