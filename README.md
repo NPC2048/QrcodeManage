@@ -1,4 +1,4 @@
-###### QrcodeManage 二维码管理
+## QrcodeManage 二维码管理
 
 根据 xxx, 写了一个 Java 版的
 
