@@ -1,5 +1,5 @@
 # 基础镜像
-FROM maven:3.5.4-jdk-8
+FROM java8
 # 维护者信息
 MAINTAINER liangyuelong "npc2048@qq.com"
 

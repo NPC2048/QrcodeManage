@@ -3,6 +3,7 @@ package com.liangyuelong.qrcode.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liangyuelong.qrcode.aop.annotation.Log;
 import com.liangyuelong.qrcode.common.bean.R;
+import com.liangyuelong.qrcode.common.form.code.CodeAddForm;
 import com.liangyuelong.qrcode.common.form.code.CodePageForm;
 import com.liangyuelong.qrcode.entity.Code;
 import com.liangyuelong.qrcode.service.CodeService;
@@ -55,7 +56,9 @@ public class QrCodeManageController {
      * @return R
      */
     @PostMapping("/add")
-    public R add() {
+    public R add(@Valid CodeAddForm form) {
+
+
         return R.SUCCESS;
     }
 
