@@ -266,6 +266,13 @@ function login () {
         if (!r.state) {
             return swal(r.msg);
         }
+        localStorage.u = u;
+        // 登录成功
+        menu();
+        $("#modal-form").modal('hide');
+        $('.user').show();
+        $('.un_user').hide();
+        $('.user_name').text(u);
     });
 }
 
@@ -315,10 +322,11 @@ function add_content (msg) {
 }
 
 function menu () {
+    $.get(base_url + '/content', {})
     $.ajax({
-        url: base_url + '/php/content.php',
+        url: base_url + '/content',
         data: 'u=' + localStorage.u,
-        success: add_content
+        success: 'add_content'
     });
 }
 

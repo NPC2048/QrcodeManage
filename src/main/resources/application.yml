@@ -19,6 +19,9 @@ spring:
     user:
       name: admin
       password: Admin123456@qq.com
+  freemarker:
+    suffix: .html
+    request-context-attribute: request
 mybatis-plus:
   global-config:
     db-config:
