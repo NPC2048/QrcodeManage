@@ -10,7 +10,7 @@ EXPOSE 8091
 # 环境编码
 ENV LANG C.UTF-8
 # 将 target 下的 qrcode.jar 包复制到 容器的 /app 目录
-COPY /target/qrcode.jar /app
+#COPY target/qrcode.jar /app
 
 # 运行项目
 #ENTRYPOINT ["mvn", "clean", "spring-boot:run", "-Dspring-boot.run.profiles=prod", "-Dmaven.test.skip=true"]

@@ -18,7 +18,7 @@ services:
     privileged: true
     # 目录、文件挂载
     volumes:
-    - ./app:/app
+    - ./target:/app
     ports:
     - 8091:8091
     # 容器创建后执行命令, 运行项目
