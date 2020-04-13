@@ -14,6 +14,8 @@ services:
       dockerfile: Dockerfile
     # 工作目录, 容器内的 app 文件夹
     working_dir: /app
+    # 开启访问宿主机的权限
+    privileged: true
     # 目录、文件挂载
     volumes:
     - ./app:/app
