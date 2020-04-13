@@ -98,20 +98,32 @@
             </activation>
             <!-- 环境参数 -->
             <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
+                <dir>/</dir>
+                <profiles.active>dev</profiles.active>
             </properties>
         </profile>
         <!-- 生产环境 -->
         <profile>
             <id>prod</id>
             <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
+                <dir>/prod</dir>
+                <profiles.active>prod</profiles.active>
                 <!-- 跳过测试 -->
                 <skipTests>true</skipTests>
             </properties>
         </profile>
     </profiles>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>application.yml</include>
+                    <include>application-${profiles.active}.yml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
