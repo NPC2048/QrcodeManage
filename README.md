@@ -42,6 +42,7 @@ spring-boot.run.profiles 如果不指定则默认为 dev, 默认值可以在 app
 建议这种方式, 打包后把 jar 包与 Dockerfile、docker-compose.yml 上传到服务器构建容器运行
 
 或者在服务器拉取源代码, 打包后运行也行
+打包前需要新建 application-prod.yml, 对生产环境的数据源等进行配置, 配置后再打包
 
 1. 打包
 * 开发环境

@@ -1,21 +1,23 @@
-version: '3'
+version: '3.7'
 services:
   qrcode-manage:
+    # 容器基础镜像
+    image: java:8
     # 容器名称
     container_name: qrcode-manage
     # 重启策略: 容器退出时总是重启容器
     restart: always
     build:
       # 上下文根目录
-      context: ./
+      context: .
       # 根据上下文根目录指定的 Dockerfile
       dockerfile: Dockerfile
     # 工作目录, 容器内的 app 文件夹
     working_dir: /app
-    # 文件挂载
+    # 目录、文件挂载
     volumes:
-    - ./target:/app
+    - ./app:/app
     ports:
     - 8091:8091
     # 容器创建后执行命令, 运行项目
-    command: java -jar qrcode-1.0.0.jar
+    command: java -jar qrcode.jar

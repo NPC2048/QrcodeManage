@@ -87,7 +87,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <!-- 分环境打包 -->
+    <!-- 分环境打包配置 -->
     <profiles>
         <!-- 开发环境 -->
         <profile>
@@ -114,6 +114,14 @@
         </profile>
     </profiles>
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <!-- 打包出来的 jar 包名称 -->
+        <finalName>${project.name}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -124,11 +132,5 @@
                 </includes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
 </project>
