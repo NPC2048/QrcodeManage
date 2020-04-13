@@ -5,6 +5,8 @@ target/
 !**/src/test/**
 # 生產配置文件
 *-prod.yml
+# 保留 app 文件夹, 忽略 app 文件夹下的所有文件
+!**/app/**
 
 ### STS ###
 .apt_generated
