@@ -3,6 +3,7 @@ package com.liangyuelong.qrcode.controller;
 import com.liangyuelong.qrcode.aop.annotation.Log;
 import com.liangyuelong.qrcode.common.NoLogException;
 import com.liangyuelong.qrcode.common.bean.R;
+import com.liangyuelong.qrcode.common.constant.GlobalConstant;
 import com.liangyuelong.qrcode.common.form.user.LoginForm;
 import com.liangyuelong.qrcode.common.form.user.RegisterForm;
 import com.liangyuelong.qrcode.entity.User;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 /**
@@ -49,7 +51,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public R login(@Valid LoginForm form) {
+    public R login(HttpSession session, @Valid LoginForm form) {
         User user = userService.getByUsername(form.getUsername());
         if (user == null) {
             throw new NoLogException("该用户不存在");
@@ -60,7 +62,10 @@ public class LoginController {
         }
         // 登录成功, 放入容器
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), null);
+        token.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(token);
+        // 往 session 中存储用户 id, 便于验证
+        session.setAttribute(GlobalConstant.USER_ID, user.getId());
         return R.SUCCESS;
     }
 

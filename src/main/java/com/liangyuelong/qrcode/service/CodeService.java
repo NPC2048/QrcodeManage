@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.liangyuelong.qrcode.common.form.code.CodeAddForm;
 import com.liangyuelong.qrcode.common.form.code.CodeEditForm;
 import com.liangyuelong.qrcode.entity.Code;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -35,5 +36,6 @@ public interface CodeService extends IService<Code> {
      * @param username username
      * @return List
      */
+    @PreAuthorize("principal.equals(#username)")
     List<Code> listByUsername(String username);
 }

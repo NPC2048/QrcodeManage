@@ -10,6 +10,7 @@ import com.liangyuelong.qrcode.common.form.code.CodePageForm;
 import com.liangyuelong.qrcode.entity.Code;
 import com.liangyuelong.qrcode.service.CodeService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 二维码管理 controller
@@ -36,9 +38,11 @@ public class QrCodeManageController {
 
     /**
      * 查看二维码
+     * 只能查看自己的
      *
      * @param id 二维码 id
      */
+    @PreAuthorize("principal.username.equals(#userService.getById(#id).username)")
     @GetMapping(value = "/view")
     public String view(Long id, ModelMap modelMap) {
         if (id == null) {
@@ -57,11 +61,12 @@ public class QrCodeManageController {
 
     /**
      * 查询二维码
-     *
+     * <p>
      * 前端根据 base_url 显示二维码
      *
      * @return R
      */
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/search")
     @ResponseBody
     public R search(CodePageForm form) {
@@ -80,6 +85,8 @@ public class QrCodeManageController {
 
     /**
      * 查询所有二维码
+     * 只能查询自己的
+     *
      * @return R
      */
     @GetMapping("/content")
@@ -88,14 +95,17 @@ public class QrCodeManageController {
         if (StringUtils.isBlank(username)) {
             return R.failed("用户名不能为空");
         }
-        return R.success(this.codeService.listByUsername(username));
+        List<Code> codeList = this.codeService.listByUsername(username);
+        return R.success(codeList);
     }
 
     /**
      * 添加二维码
+     * 只能给自己添加
      *
      * @return R
      */
+    @PreAuthorize("authentication.details.id.equals(#form.userId)")
     @PostMapping("/add")
     @ResponseBody
     public R add(@Valid CodeAddForm form) {
@@ -108,9 +118,11 @@ public class QrCodeManageController {
 
     /**
      * 编辑二维码
+     * 只能编辑自己的
      *
      * @return R
      */
+    @PreAuthorize("principal.username.equals(#userService.getById(form.userId).username)")
     @PostMapping("/edit")
     @ResponseBody
     public R edit(@Valid CodeEditForm form) {
@@ -122,10 +134,12 @@ public class QrCodeManageController {
 
     /**
      * 删除二维码
+     * 只能删除自己的
      *
      * @param id 二维码 id
      * @return R
      */
+    @PreAuthorize("principal.username.equals(#userService.getById(id).username)")
     @PostMapping("/delete")
     @ResponseBody
     public R delete(@Valid @NotNull(message = "id 不能为空") Long id) {

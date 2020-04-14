@@ -5,6 +5,7 @@ import com.liangyuelong.qrcode.common.NoLogException;
 import com.liangyuelong.qrcode.common.bean.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +45,18 @@ public class ErrorControllerAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public R httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         return R.failed("请求方法不支持:" + e.getMethod());
+    }
+
+    /**
+     * 无权限访问
+     *
+     * @param e e
+     * @return R
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public R accessDeniedException(AccessDeniedException e) {
+        log.info(ExceptionUtils.getStackTrace(e));
+        return R.failed(e.getMessage());
     }
 
     /**

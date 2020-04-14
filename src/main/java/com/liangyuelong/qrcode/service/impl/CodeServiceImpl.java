@@ -42,7 +42,6 @@ public class CodeServiceImpl extends ServiceImpl<CodeMapper, Code> implements Co
 
     @Override
     public List<Code> listByUsername(String username) {
-
-        return null;
+        return this.baseMapper.listByUsername(username);
     }
 }

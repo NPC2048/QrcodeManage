@@ -18,10 +18,12 @@ import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
+ * jackson json ObjectMapper 复用工具类
+ *
  * @author yuelong.liang
  */
 @Slf4j
@@ -29,7 +31,7 @@ public class JsonUtils {
 
     private static int maxSize = 32;
 
-    private static final ConcurrentMap<String, ObjectMapper> CACHE = new ConcurrentHashMap<>(maxSize);
+    private static final Map<String, ObjectMapper> CACHE = new ConcurrentHashMap<>(maxSize);
 
     private static final ObjectMapper DEFAULT_OM = customObjectMapper(DateFormatConstants.DEFAULT);
 
@@ -69,7 +71,7 @@ public class JsonUtils {
 
     public static <T> T parse(String json, Class<T> tClass) {
         try {
-            parseThrow(json, tClass);
+            return parseThrow(json, tClass);
         } catch (JsonProcessingException e) {
             log.info(ExceptionUtils.getStackTrace(e));
         }
@@ -78,7 +80,7 @@ public class JsonUtils {
 
     public static <T> T parse(String json, String pattern, Class<T> tClass) {
         try {
-            parseThrow(json, pattern, tClass);
+            return parseThrow(json, pattern, tClass);
         } catch (JsonProcessingException e) {
             log.info(ExceptionUtils.getStackTrace(e));
         }

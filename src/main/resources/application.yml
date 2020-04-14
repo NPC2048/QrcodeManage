@@ -18,13 +18,11 @@ spring:
   jackson:
     # 为 null 的属性不转换
     default-property-inclusion: non_null
-    # 驼峰与下划线互转
-    property-naming-strategy: SNAKE_CASE
     # 默认日期格式
     date-format: yyyy-MM-dd HH:mm:ss
   # 环境配置, 默认为开发环境
   profiles:
-    # 从
+    # 从运行环境参数选择
     active: @profiles.active@
   # spring security 配置
   security:

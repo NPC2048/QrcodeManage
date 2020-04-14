@@ -322,7 +322,7 @@ function add_content (msg) {
 }
 
 function menu () {
-    $.get(base_url + '/content', {})
+    $.get(base_url + '/manage/content', {});
     $.ajax({
         url: base_url + '/content',
         data: 'u=' + localStorage.u,
