@@ -66,7 +66,7 @@ public class QrCodeManageController {
      *
      * @return R
      */
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("authentication.details.id.equals(#form.userId)")
     @GetMapping("/search")
     @ResponseBody
     public R search(CodePageForm form) {
@@ -89,12 +89,10 @@ public class QrCodeManageController {
      *
      * @return R
      */
+    @PreAuthorize("principal.equals(#username)")
     @GetMapping("/content")
     @ResponseBody
     public R content(String username) {
-        if (StringUtils.isBlank(username)) {
-            return R.failed("用户名不能为空");
-        }
         List<Code> codeList = this.codeService.listByUsername(username);
         return R.success(codeList);
     }
@@ -122,7 +120,7 @@ public class QrCodeManageController {
      *
      * @return R
      */
-    @PreAuthorize("principal.username.equals(#userService.getById(form.userId).username)")
+    @PreAuthorize("authentication.details.id.equals(#form.userId)")
     @PostMapping("/edit")
     @ResponseBody
     public R edit(@Valid CodeEditForm form) {
@@ -139,7 +137,7 @@ public class QrCodeManageController {
      * @param id 二维码 id
      * @return R
      */
-    @PreAuthorize("principal.username.equals(#userService.getById(id).username)")
+    @PreAuthorize("authentication.details.id.equals(#id)")
     @PostMapping("/delete")
     @ResponseBody
     public R delete(@Valid @NotNull(message = "id 不能为空") Long id) {

@@ -54,9 +54,10 @@ public class ErrorControllerAdvice {
      * @return R
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public R accessDeniedException(AccessDeniedException e) {
+    public AccessDeniedException accessDeniedException(AccessDeniedException e) {
         log.info(ExceptionUtils.getStackTrace(e));
-        return R.failed(e.getMessage());
+//        return R.failed(e.getMessage());
+        return e;
     }
 
     /**

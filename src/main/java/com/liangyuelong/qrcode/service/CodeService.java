@@ -36,6 +36,6 @@ public interface CodeService extends IService<Code> {
      * @param username username
      * @return List
      */
-    @PreAuthorize("principal.equals(#username)")
     List<Code> listByUsername(String username);
+
 }

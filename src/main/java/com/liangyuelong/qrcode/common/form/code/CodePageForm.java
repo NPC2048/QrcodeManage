@@ -5,6 +5,8 @@ import com.liangyuelong.qrcode.entity.Code;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 博客分页查询表单
  *
@@ -22,6 +24,7 @@ public class CodePageForm extends Page<Code> {
     /**
      * 用户 id
      */
+    @NotNull(message = "用户 id 不能为空")
     private Long userId;
 
     /**

@@ -73,4 +73,16 @@ public class R {
         return new R(state ? ResultEnum.SUCCESS.getCode() : ResultEnum.FAILED.getCode());
     }
 
+    public static R result(Exception e) {
+        return new R(ResultEnum.FAILED.getCode(), e.getMessage());
+    }
+
+    public static R result(String msg) {
+        return new R(ResultEnum.SUCCESS.getCode(), msg);
+    }
+
+    public static R result(Object data) {
+        return new R(ResultEnum.SUCCESS.getCode(), data);
+    }
+
 }

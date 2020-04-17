@@ -26,8 +26,19 @@
 3. 找到 QrcodeApplication, 运行
 > 路径: src/main/java/com.liangyuelong.qrcode.QrcodeApplication
 
+###### 打包
+
+生产环境打包前需要在 src/main/resources/ 下新建 application-prod.yml, 对生产环境的数据源等进行配置, 配置后再打包
+
+* 开发环境
+> mvn clean package
+* 生产环境
+> mvn clean package -P prod
+
 ***
 ###### 部署
+
+maven 编译部署
 
 1. 拉取项目
 2. 在项目根目录运行命令:
@@ -36,19 +47,18 @@
 spring-boot.run.profiles 如果不指定则默认为 dev, 默认值可以在 application.yml 中修改
 需要服务器安装 java、maven 环境
 
+打包后运行 jar 包
+1.打包, 然后把 target 下的 qrcode.jar 包传到服务器
+2.在服务器的 qrcode.jar 包目录下, 运行
+> java -jar qrcode.jar
+
 ***
 ###### Docker 部署
 
 建议这种方式, 打包后把 jar 包与 Dockerfile、docker-compose.yml 上传到服务器构建容器运行
 
 或者在服务器拉取源代码, 打包后运行也行
-打包前需要新建 application-prod.yml, 对生产环境的数据源等进行配置, 配置后再打包
-
 1. 打包
-* 开发环境
-> mvn clean package
-* 生产环境
-> mvn clean package -P prod
 2. 运行项目
 * 构建容器
 > docker-compose build

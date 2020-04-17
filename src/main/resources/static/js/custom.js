@@ -1,14 +1,32 @@
-'use strict';
-
 //需要改为你的服务器网址
 var base_url = '//localhost:8091';
+// 封装 get 与 post
+$([{name: 'cget', method: 'get'}, {name: 'cpost', method: 'post'}]).each(function (index, item) {
+    $[item.name] = function (url, data, callback) {
+        // 参数移位
+        if (!data) {
+            data = callback;
+            callback = undefined;
+        }
+        $[item.method](url, data, function (r) {
+            var data = JSON.parse(r);
+            // 2 未登录
+            if(data.state === 2) {
+                return swal('未登录, 请先登录');
+            }
+            if (!data.state) {
+                return swal(data.msg);
+            }
+            if (typeof callback == 'function') {
+                callback(data.obj);
+            }
+        });
+    }
+});
 
 (function ($) {
 
-    "use strict";
-
     // PRE LOADER
-
     $(window).load(function () {
         $('.preloader').fadeOut(1000); // set duration in brackets    
     });
@@ -48,7 +66,7 @@ var base_url = '//localhost:8091';
             // The "opener" function should return the element from which popup will be zoomed in
             // and to which popup will be scaled down
             // By defailt it looks for an image tag:
-            opener: function opener (openerElement) {
+            opener: function opener(openerElement) {
                 // openerElement is the element on which popup was initialized, in this case its <a> tag
                 // you don't need to add "opener" option if this code matches your needs, it's defailt one.
                 return openerElement.is('img') ? openerElement : openerElement.find('img');
@@ -68,7 +86,7 @@ var base_url = '//localhost:8091';
     start();
 })(jQuery);
 
-function start () {
+function start() {
     if (localStorage.u) {
         $('.user').show();
         $('.un_user').hide();
@@ -108,13 +126,13 @@ function start () {
     });
 }
 
-function visit () {
+function visit() {
     var u = '游客';
     var p = '888888';
     $.ajax({
         url: base_url + '/php/login.php',
         data: 'u=' + u + '&p=' + p,
-        success: function success (msg) {
+        success: function success(msg) {
             var data = JSON.parse(msg);
             if (data.code == '1') {
                 console.log('ok');
@@ -131,15 +149,25 @@ function visit () {
     });
 }
 
-function search_code () {
+function search_code() {
     var u = localStorage.u;
     var a = $('#search_address').val().trim();
     var n = $('#search_name').val().trim();
     var c = $('#search_url').val().trim();
+    $.get(base_url + '/manage/search', {
+        userId: localStorage.user.id,
+        address: a,
+        name: n,
+        content: c
+    }, function (r) {
+        if (r.state) {
+
+        }
+    });
     $.ajax({
         url: base_url + '/php/search.php',
         data: 'u=' + u + '&c=' + c + '&a=' + a + '&n=' + n,
-        success: function success (msg) {
+        success: function success(msg) {
             var data = JSON.parse(msg);
             if (data.code == '1') {
                 add_content(msg);
@@ -152,7 +180,7 @@ function search_code () {
     });
 }
 
-function fix_code () {
+function fix_code() {
     var u = localStorage.u;
     var i = localStorage.i;
     var a = $('#fix_address').val();
@@ -175,7 +203,7 @@ function fix_code () {
             n: n,
             i: i
         },
-        success: function success (msg) {
+        success: function success(msg) {
             var data = JSON.parse(msg);
             if (data.code == '1') {
                 $('#modal-form3').modal('show');
@@ -191,13 +219,13 @@ function fix_code () {
     });
 }
 
-function delete_code () {
+function delete_code() {
     var u = localStorage.u;
     var i = localStorage.i;
     $.ajax({
         url: base_url + '/php/delete.php',
         data: 'u=' + u + '&i=' + i,
-        success: function success (msg) {
+        success: function success(msg) {
             var data = JSON.parse(msg);
             if (data.code == '1') {
                 $('#modal-form3').modal('show');
@@ -212,7 +240,7 @@ function delete_code () {
     });
 }
 
-function add_code () {
+function add_code() {
     var u = localStorage.u;
     var c = $('#add_url').val().trim();
     var i = $('#add_info').val().trim();
@@ -234,7 +262,7 @@ function add_code () {
         return;
     }
     $.ajax({
-        url: base_url + '/php/add.php',
+        url: base_url + '/manage/add',
         method: "POST",
         data: {
             u: u,
@@ -243,7 +271,7 @@ function add_code () {
             n: n,
             i: i
         },
-        success: function success (msg) {
+        success: function success(msg) {
             var data = JSON.parse(msg);
             if (data.code == '1') {
                 $('#modal-form3').modal('show');
@@ -258,15 +286,12 @@ function add_code () {
     });
 }
 
-function login () {
-    var u = $('#user_g').val();
-    var p = $('#password_g').val();
-    $.post(base_url + '/login', {username: u, password: p}, function (r) {
-        console.log(r);
-        if (!r.state) {
-            return swal(r.msg);
-        }
-        localStorage.u = u;
+function login() {
+    var username = $('#user_g').val();
+    var password = $('#password_g').val();
+    $.cpost(base_url + '/login', {username: username, password: password}, function (id) {
+        localStorage.u = username;
+        localStorage.user = {id: id, username: username};
         // 登录成功
         menu();
         $("#modal-form").modal('hide');
@@ -276,13 +301,11 @@ function login () {
     });
 }
 
-function register () {
+function register() {
     var u = $('#user_gr').val() || 'test';
     var p = $('#password_gr').val() || 'test';
-    $.post(base_url + '/register', {username: u, password: p}, (r)=> {
-        if (!r.state) {
-            return swal(r.msg);
-        }
+    $.cpost(base_url + '/register', {username: u, password: p}, (data)=>{
+        // cpost 没弹出错误框就代表无错误
         swal('注册成功');
         // 打开登录模态框
         $('#modal-form-register').modal('hide');
@@ -294,7 +317,7 @@ function register () {
     });
 }
 
-function add_content (msg) {
+function add_content(msg) {
     $('.code_info').remove();
     var data = JSON.parse(msg);
     if (data.code == '1') {
@@ -312,7 +335,7 @@ function add_content (msg) {
             html += '       <div class="col-md-6 col-sm-6 code_info">\n           <div class="media blog-thumb">\n              <div class="media-object media-left ele' + i + '">\n              </div>\n              <div class="media-body blog-info">\n                 <small><i class="fa fa-clock-o"></i>\u626B\u7801\u6B21\u6570:' + data.content[i].num + '</small>\n                 <h3><a href="javascript:void(0)">' + data.content[i].name + '</a></h3>\n                 <p>I D : ' + code_id2 + '</p>\n                 <p>\u7F51\u5740 : ' + data.content[i].content + '</p>\n                 <p>\u533A\u57DF : ' + (data.content[i].address || '无') + '</p>\n                 <p>\u5907\u6CE8 : ' + (data.content[i].info || '无') + '</p>\n                 <button class="btn section-btn" onclick=\'fix("' + encodeURI(data.content[i].id) + '","' + encodeURI(data.content[i].address) + '","' + encodeURI(data.content[i].name) + '","' + encodeURI(data.content[i].content) + '","' + encodeURI(data.content[i].info) + '")\'>\u4FEE\u6539</button>\n              </div>\n           </div>\n        </div>';
             $('#code_b').append(html);
             var ele = '.ele' + i;
-            var url = 'http:' + base_url + '/web/jump.html?id=' + data.content[i].id + '&&qq=228322991&v=0.2.1';
+            var url = 'http:' + base_url + '/view?id=' + data.content[i].id + '&&qq=228322991&v=0.2.1';
             paint(url, ele);
         }
     } else {
@@ -321,16 +344,11 @@ function add_content (msg) {
     }
 }
 
-function menu () {
-    $.get(base_url + '/manage/content', {});
-    $.ajax({
-        url: base_url + '/content',
-        data: 'u=' + localStorage.u,
-        success: 'add_content'
-    });
+function menu() {
+    $.get(base_url + '/manage/content', {username: localStorage.u}, 'add_content');
 }
 
-function fix (id, a, n, c, i) {
+function fix(id, a, n, c, i) {
     localStorage.i = id;
     $('#fix_address').val(decodeURI(a));
     $('#fix_name').val(decodeURI(n));
@@ -339,9 +357,9 @@ function fix (id, a, n, c, i) {
     $('#modal-form2').modal('show');
 }
 
-function paint (url, ele) {
+function paint(url, ele) {
     outputQRCod(url, 200, 200); //转换中文字符串
-    function toUtf8 (str) {
+    function toUtf8(str) {
         var out, i, len, c;
         out = "";
         len = str.length;
@@ -362,7 +380,7 @@ function paint (url, ele) {
     }
 
     //生成二维码
-    function outputQRCod (txt, width, height) {
+    function outputQRCod(txt, width, height) {
         //先清空
         $(ele).empty();
         //中文格式转换
@@ -377,7 +395,7 @@ function paint (url, ele) {
     }
 }
 
-function exit () {
+function exit() {
     localStorage.u = '';
     location.reload();
 }

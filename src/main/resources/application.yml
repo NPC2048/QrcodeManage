@@ -2,6 +2,7 @@ spring:
   application:
     name: 2code
   main:
+    # 可覆盖 bean
     allow-bean-definition-overriding: true
   # 数据源默认配置
   datasource:
@@ -28,16 +29,23 @@ spring:
   security:
     user:
       name: admin
-      password: Admin123456@qq.com
+      password: npc2048@qq.com
+  # 模板引擎配置
   freemarker:
+    # 后缀
     suffix: .html
+    # 在模板文件里里使用 request 获取 request 信息, 如项目根路径等
     request-context-attribute: request
+    # 检查模板位置，为了防止打印警告，选择关闭
+    check-template-location: false
+# mybatis-plus 配置
 mybatis-plus:
   global-config:
     db-config:
-      # id 类型, 唯一 id
+      # id 类型, 跟随数据库
       id-type: auto
-      table-prefix: 2code
+      # 表前缀
+      table-prefix: 2code_
   configuration:
     # 实体类与数据库字段映射：驼峰与下划线互相转换, 满足规则的字段不需要 @TableFiled 注明数据库字段
     map-underscore-to-camel-case: true

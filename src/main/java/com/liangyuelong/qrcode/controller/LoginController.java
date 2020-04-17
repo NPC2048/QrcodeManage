@@ -66,7 +66,7 @@ public class LoginController {
         SecurityContextHolder.getContext().setAuthentication(token);
         // 往 session 中存储用户 id, 便于验证
         session.setAttribute(GlobalConstant.USER_ID, user.getId());
-        return R.SUCCESS;
+        return R.success(user.getId());
     }
 
 }
