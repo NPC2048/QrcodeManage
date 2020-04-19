@@ -1,8 +1,6 @@
 package com.liangyuelong.qrcode.controller;
 
-import com.liangyuelong.qrcode.common.BizException;
 import com.liangyuelong.qrcode.common.NoLogException;
-import com.liangyuelong.qrcode.common.bean.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,24 +25,18 @@ public class ErrorControllerAdvice {
      * @return R
      */
     @ExceptionHandler(BindException.class)
-    public R bindException(BindException e) {
-        return R.failed(e.getAllErrors().get(0).getDefaultMessage());
+    public BindException bindException(BindException e) {
+        return e;
     }
 
     @ExceptionHandler(NoLogException.class)
-    public R noLogException(NoLogException e) {
-        return R.failed(e.getMessage());
-    }
-
-    @ExceptionHandler(BizException.class)
-    public R bizException(BizException e) {
-        log.info(ExceptionUtils.getStackTrace(e));
-        return R.failed(e.getMessage());
+    public NoLogException noLogException(NoLogException e) {
+        return e;
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public R httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        return R.failed("请求方法不支持:" + e.getMethod());
+    public HttpRequestMethodNotSupportedException httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return e;
     }
 
     /**
@@ -56,7 +48,6 @@ public class ErrorControllerAdvice {
     @ExceptionHandler(AccessDeniedException.class)
     public AccessDeniedException accessDeniedException(AccessDeniedException e) {
         log.info(ExceptionUtils.getStackTrace(e));
-//        return R.failed(e.getMessage());
         return e;
     }
 
@@ -67,9 +58,9 @@ public class ErrorControllerAdvice {
      * @return R
      */
     @ExceptionHandler(Exception.class)
-    public R exception(Exception e) {
+    public Exception exception(Exception e) {
         log.info(ExceptionUtils.getStackTrace(e));
-        return R.failed("服务器错误");
+        return e;
     }
 
 }

@@ -25,8 +25,6 @@ public class MybatisConfig implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         Date now = new Date();
         this.setFieldValByName("createTime", now, metaObject);
-        this.setFieldValByName("updateTime", now, metaObject);
-        this.setFieldValByName("state", (byte) 1, metaObject);
         // 密码
     }
 

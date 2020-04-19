@@ -136,6 +136,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
+                    <include>static/**</include>
                     <include>mapper/**/*</include>
                 </includes>
             </resource>
