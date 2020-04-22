@@ -12,6 +12,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.text.DateFormat;
@@ -135,6 +136,10 @@ public class JsonUtils {
 
     public static <T> T parseThrow(String json, TypeReference<T> typeReference) throws JsonProcessingException {
         return DEFAULT_OM.readValue(json, typeReference);
+    }
+
+    public static <T> T parseThrow(InputStream input, Class<T> tClass) throws IOException {
+        return DEFAULT_OM.readValue(input, tClass);
     }
 
     private static ObjectMapper customObjectMapper(String pattern) {
