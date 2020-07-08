@@ -1,34 +1,34 @@
 //需要改为你的服务器网址
 var base_url = '//localhost:8091';
-// 封装 get 与 post
-$([{name: 'cget', method: 'get'}, {name: 'cpost', method: 'post'}]).each(function (index, item) {
-    $[item.name] = function (url, data, callback) {
-        // 参数移位
-        if (!data) {
-            data = callback;
-            callback = undefined;
-        }
-        $[item.method](url, data, function (r) {
-            var data = JSON.parse(r);
-            // 2 未登录
-            if(data.state === 2) {
-                return swal('未登录, 请先登录');
-            }
-            if (!data.state) {
-                return swal(data.msg);
-            }
-            if (typeof callback == 'function') {
-                callback(data.obj);
-            }
-        });
-    }
-});
 
 (function ($) {
+    // 封装 get 与 post
+    $([{name: 'cget', method: 'get'}, {name: 'cpost', method: 'post'}]).each(function (index, item) {
+        $[item.name] = function (url, data, callback) {
+            // 参数移位
+            if (!data) {
+                data = callback;
+                callback = undefined;
+            }
+            $[item.method](url, data, function (data) {
+                // 2 未登录
+                if(data.state === 2) {
+                    flushStatus();
+                    return swal('未登录, 请先登录');
+                }
+                if (!data.state) {
+                    return swal(data.msg);
+                }
+                if (typeof callback == 'function') {
+                    callback(data.obj);
+                }
+            });
+        }
+    });
 
     // PRE LOADER
     $(window).load(function () {
-        $('.preloader').fadeOut(1000); // set duration in brackets    
+        $('.preloader').fadeOut(1000); // set duration in brackets
     });
 
     // MENU
@@ -59,16 +59,9 @@ $([{name: 'cget', method: 'get'}, {name: 'cpost', method: 'post'}]).each(functio
         },
         zoom: {
             enabled: true, // By default it's false, so don't forget to enable it
-
             duration: 300, // duration of the effect, in milliseconds
             easing: 'ease-in-out', // CSS transition easing function
-
-            // The "opener" function should return the element from which popup will be zoomed in
-            // and to which popup will be scaled down
-            // By defailt it looks for an image tag:
             opener: function opener(openerElement) {
-                // openerElement is the element on which popup was initialized, in this case its <a> tag
-                // you don't need to add "opener" option if this code matches your needs, it's defailt one.
                 return openerElement.is('img') ? openerElement : openerElement.find('img');
             }
         }
@@ -82,6 +75,46 @@ $([{name: 'cget', method: 'get'}, {name: 'cpost', method: 'post'}]).each(functio
             }, 1000);
             event.preventDefault();
         });
+
+        // 初始化地区选择器
+        $.getJSON("/json/area.json").done(function (res) {
+            $("#address").iPicker({
+                data: res,
+                width: 170,
+                height: 55,
+                onSelect: function (v) {
+                    $("#area").val(v.join())
+                }
+            })
+        })
+
+        // 字段验证
+        $("#qrcodeForm").validate({
+            ignore: "",
+            rules: {
+                name: { required: true, maxlength: 32},
+                content: {required: true, maxlength: 512},
+                addressId: {required: true, maxlength: 64},
+                info: {maxlength: 16}
+            },
+            messages: {
+                name: {
+                    required: "请输入二维码名称",
+                    maxlength: "二维码名称最多为 32 个字符"
+                },
+                content: {
+                    required: "请输入网址",
+                    maxlength: "网址过长, 最多输入 512 字符"
+                },
+                addressId: {
+                    required: "请选择地区",
+                    maxlength: "地区id过长, 最多 64 个字符"
+                },
+                info: {
+                    maxlength: "备注过长, 最多 16 个字符"
+                }
+            }
+        })
     });
     start();
 })(jQuery);
@@ -160,12 +193,13 @@ function search_code() {
         name: n,
         content: c
     }, function (r) {
-        if (r.state) {
-
+        if (!r.state) {
+            return swal(r.msg)
         }
+        swal("success")
     });
     $.ajax({
-        url: base_url + '/php/search.php',
+        url: base_url + '/search',
         data: 'u=' + u + '&c=' + c + '&a=' + a + '&n=' + n,
         success: function success(msg) {
             var data = JSON.parse(msg);
@@ -178,6 +212,7 @@ function search_code() {
         }
 
     });
+
 }
 
 function fix_code() {
@@ -242,48 +277,48 @@ function delete_code() {
 
 function add_code() {
     var u = localStorage.u;
-    var c = $('#add_url').val().trim();
-    var i = $('#add_info').val().trim();
-    var n = $('#add_name').val().trim();
-    var a = '';
-    if ($('#province').val() != -1) {
-        a += $('#province option[value="' + $('#province').val() + '"]').text() + ' ';
+    if (!u) {
+        return swal('未登录, 请先登录')
     }
-    if ($('#city').val() != -1) {
-        a += $('#city option[value="' + $('#city').val() + '"]').text() + ' ';
-    }
-    if ($('#district').val() != -1) {
-        a += $('#district option[value="' + $('#district').val() + '"]').text() + ' ';
-    }
-    if (!c || !n) {
-        $('#modal-form3').modal('show');
-        $('#modal-form3 .info_text').text('请完整输入!');
-
-        return;
-    }
-    $.ajax({
+    var $form = $("#qrcodeForm");
+    console.log(u);
+    console.log($form);
+    $form.ajaxSubmit({
         url: base_url + '/manage/add',
-        method: "POST",
-        data: {
-            u: u,
-            c: c,
-            a: a,
-            n: n,
-            i: i
+        type: "POST",
+        datatype: "json",
+        clearForm: true,
+        data: {username: u.username},
+        beforeSubmit: function () {
+            return $form.valid();
         },
-        success: function success(msg) {
-            var data = JSON.parse(msg);
-            if (data.code == '1') {
-                $('#modal-form3').modal('show');
-                $('#modal-form3 .info_text').text('新增成功!');
-                location.reload();
-            } else {
-                $('#modal-form3').modal('show');
-                $('#modal-form3 .info_text').text('新增失败!');
-            }
+        success: function (data) {
+            checkError(data);
         }
+    })
 
-    });
+    // $.ajax({
+    //     url: base_url + '/manage/add',
+    //     method: "POST",
+    //     data: {
+    //         u: u,
+    //         c: c,
+    //         a: a,
+    //         n: n,
+    //         i: i
+    //     },
+    //     success: function success(msg) {
+    //         var data = JSON.parse(msg);
+    //         if (data.code == '1') {
+    //             $('#modal-form3').modal('show');
+    //             $('#modal-form3 .info_text').text('新增成功!');
+    //             location.reload();
+    //         } else {
+    //             $('#modal-form3').modal('show');
+    //             $('#modal-form3 .info_text').text('新增失败!');
+    //         }
+    //     }
+    // });
 }
 
 function login() {
@@ -395,7 +430,27 @@ function paint(url, ele) {
     }
 }
 
+function checkError(data, callback) {
+    if(data.state == 2) {
+        swal('未登录, 请先登录');
+        return flushStatus();
+    }
+    if (data.state == 0) {
+        return swal(data.msg);
+    }
+    if (typeof callback == "function"){
+        callback(data.obj);
+    }
+}
+
+function flushStatus() {
+    delete localStorage.u;
+    delete localStorage.user;
+    start();
+}
+
 function exit() {
-    localStorage.u = '';
+    delete localStorage.u;
+    delete localStorage.user;
     location.reload();
 }

@@ -34,7 +34,7 @@
                     <span class="icon icon-bar"></span>
                 </button>
                 <!-- lOGO TEXT HERE -->
-                <a href="index.html" class="navbar-brand">二维码管理系统</a>
+<!--                <a href="index.html" class="navbar-brand">二维码管理系统</a>-->
             </div>
             <!-- MENU LINKS -->
             <div class="collapse navbar-collapse">
@@ -83,34 +83,23 @@
                 </div>
                 <div class="col-md-12 col-sm-12">
                     <!-- CONTACT FORM HERE -->
-                    <form id="contact-form" role="form">
+                    <form id="qrcodeForm" role="form">
+                        <input type="hidden" name="username">
                         <div class="col-md-6 col-sm-12">
-                            <input type="text" class="form-control" placeholder="二维码名称(必填)" name="name" required="" id="add_name">
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <input type="text" class="form-control" placeholder="网址(必填)" name="url" required="" id="add_url">
+                            <input type="text" class="form-control" placeholder="二维码名称(必填)" name="name">
                         </div>
                         <div class="col-md-6 col-sm-12">
-                            <input type="text" class="form-control" placeholder="备注信息" name="info" required="" id="add_info">
+                            <input type="text" class="form-control" placeholder="网址(必填)" name="content" >
                         </div>
-                        <div class="col-md-6 col-sm-12 address_code">
-                            <select name="province" id="province">
-                                <option value="-1">省</option>
-                            </select>
-                            <select name="city" id="city" disabled>
-                                <option value="-1">市</option>
-                            </select>
-                            <select name="district" id="district" disabled>
-                                <option value="-1">区</option>
-                            </select>
+                        <div class="col-md-6 col-sm-12">
+                            <input type="text" class="form-control" placeholder="备注信息" name="info">
                         </div>
-                        <script type="text/html" id="template_area">
-                            {{ for(var i=0;i
-                            < district_list.length;i++){ }} <option value="{{= district_list[i].code }}">{{= district_list[i].name }}</option>
-                                {{ } }}
-                        </script>
+                        <div class="col-md-6 col-sm-12 picker">
+                            <div id="address"></div>
+                            <input id="area" type="hidden" name="addressId">
+                        </div>
                         <div class="col-md-12 col-sm-12">
-                            <input type="button" class="form-control" name="submit" value="新建二维码" id="add_code">
+                            <input type="button" class="form-control" value="新建二维码" id="add_code">
                         </div>
                     </form>
                 </div>
@@ -291,15 +280,16 @@
     </section>
     <!-- SCRIPTS -->
     <script src="js/jquery-2.2.4.min.js"></script>
-    <script src="js/microtemplating.js"></script>
-    <script src="js/address_data.js"></script>
-    <script src="js/select_location.js"></script>
+    <script src="js/jquery.form-4.0.0.min.js"></script>
+    <script src="js/jquery.validate-1.19.2.min.js"></script>
     <script src="js/jquery.qrcode.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.stellar.min.js"></script>
     <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/microtemplating.js"></script>
     <script src="js/smoothscroll.js"></script>
     <script src="js/sweetalert-1.1.3.min.js"></script>
+    <script src="js/iPicker.min.js"></script>
     <script src="js/custom.js?v=11"></script>
 </body>
 

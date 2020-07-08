@@ -3,9 +3,9 @@ server:
 spring:
   # 开发环境数据源配置
   datasource:
-    url: jdbc:mysql://139.159.236.186/2qrcode?pinGlobalTxToPhysicalConnection=true&autoReconnect=true&useUnicode=true&serverTimezone=GMT%2b8&useSSL=false&characterEncoding=utf-8
+    url: jdbc:mysql://139.159.236.186:6606/2code?pinGlobalTxToPhysicalConnection=true&autoReconnect=true&useUnicode=true&serverTimezone=GMT%2b8&useSSL=false&characterEncoding=utf-8
     username: root
-    password: PasswordHuaWeiYun123
+    password: MySql@#$123
 # mybatis-plus 配置
 mybatis-plus:
   configuration:

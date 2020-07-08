@@ -2,6 +2,7 @@ package com.liangyuelong.qrcode.controller;
 
 import com.liangyuelong.qrcode.aop.annotation.Log;
 import com.liangyuelong.qrcode.common.NoLogException;
+import com.liangyuelong.qrcode.common.bean.R;
 import com.liangyuelong.qrcode.common.constant.GlobalConstant;
 import com.liangyuelong.qrcode.common.form.user.LoginForm;
 import com.liangyuelong.qrcode.common.form.user.RegisterForm;
@@ -38,17 +39,18 @@ public class LoginController {
      * @param form 表单
      */
     @PostMapping("/register")
-    public void register(@Valid RegisterForm form) {
+    public R register(@Valid RegisterForm form) {
         // 查询用户是否存在
         User user = userService.getByUsername(form.getUsername());
         if (user != null) {
             throw new NoLogException("该用户名已存在");
         }
         userService.register(form);
+        return R.SUCCESS;
     }
 
     @PostMapping("/login")
-    public Long login(HttpSession session, @Valid LoginForm form) {
+    public R login(HttpSession session, @Valid LoginForm form) {
         User user = userService.getByUsername(form.getUsername());
         if (user == null) {
             throw new NoLogException("该用户不存在");
@@ -63,7 +65,7 @@ public class LoginController {
         SecurityContextHolder.getContext().setAuthentication(token);
         // 往 session 中存储用户 id, 便于验证
         session.setAttribute(GlobalConstant.USER_ID, user.getId());
-        return user.getId();
+        return R.success(user.getId());
     }
 
 }

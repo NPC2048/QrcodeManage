@@ -27,8 +27,6 @@ public class Code {
      */
     private Integer viewNum;
 
-    private String address;
-
     private Long addressId;
 
     /**

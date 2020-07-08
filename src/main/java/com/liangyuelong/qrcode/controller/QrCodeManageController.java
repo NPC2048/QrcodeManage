@@ -1,10 +1,10 @@
 package com.liangyuelong.qrcode.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liangyuelong.qrcode.aop.annotation.Log;
 import com.liangyuelong.qrcode.common.BizException;
 import com.liangyuelong.qrcode.common.NoLogException;
+import com.liangyuelong.qrcode.common.bean.R;
 import com.liangyuelong.qrcode.common.form.code.CodeAddForm;
 import com.liangyuelong.qrcode.common.form.code.CodeEditForm;
 import com.liangyuelong.qrcode.common.form.code.CodePageForm;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * 二维码管理 controller
@@ -70,7 +69,7 @@ public class QrCodeManageController {
     @PreAuthorize("authentication.details.id.equals(#form.userId)")
     @GetMapping("/search")
     @ResponseBody
-    public Page<Code> search(CodePageForm form) {
+    public R search(CodePageForm form) {
         QueryWrapper<Code> wrapper = new QueryWrapper<>();
         if (StringUtils.isNotEmpty(form.getName())) {
             wrapper.like("name", form.getName());
@@ -81,7 +80,7 @@ public class QrCodeManageController {
         if (StringUtils.isNotEmpty(form.getContent())) {
             wrapper.like("content", form.getContent());
         }
-        return codeService.page(form, wrapper);
+        return R.success(codeService.page(form, wrapper));
     }
 
     /**
@@ -93,8 +92,8 @@ public class QrCodeManageController {
     @PreAuthorize("principal.equals(#username)")
     @GetMapping("/content")
     @ResponseBody
-    public List<Code> content(String username) {
-        return this.codeService.listByUsername(username);
+    public R content(String username) {
+        return R.success(this.codeService.listByUsername(username));
     }
 
     /**
@@ -104,11 +103,12 @@ public class QrCodeManageController {
     @PreAuthorize("authentication.details.id.equals(#form.userId)")
     @PostMapping("/add")
     @ResponseBody
-    public void add(@Valid CodeAddForm form) {
+    public R add(@Valid CodeAddForm form) {
         boolean result = this.codeService.save(form);
         if (!result) {
             throw new NoLogException("保存二维码失败, 请重试");
         }
+        return R.SUCCESS;
     }
 
     /**
@@ -118,10 +118,11 @@ public class QrCodeManageController {
     @PreAuthorize("authentication.details.id.equals(#form.userId)")
     @PostMapping("/edit")
     @ResponseBody
-    public void edit(@Valid CodeEditForm form) {
+    public R edit(@Valid CodeEditForm form) {
         if (!this.codeService.update(form)) {
             throw new NoLogException("编辑失败, 请重试");
         }
+        return R.SUCCESS;
     }
 
     /**
@@ -133,8 +134,11 @@ public class QrCodeManageController {
     @PreAuthorize("authentication.details.id.equals(#id)")
     @PostMapping("/delete")
     @ResponseBody
-    public void delete(@Valid @NotNull(message = "id 不能为空") Long id) {
-        codeService.removeById(id);
+    public R delete(@Valid @NotNull(message = "id 不能为空") Long id) {
+        if (!codeService.removeById(id)) {
+            throw new NoLogException("删除二维码失败, 请重试");
+        }
+        return R.SUCCESS;
     }
 
 }
