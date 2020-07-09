@@ -19,7 +19,8 @@
     <select id="listByUsername" resultType="com.liangyuelong.qrcode.entity.Code">
         SELECT c.id,
                c.view_num,
-               c.address,
+               c.address_id,
+               c.content,
                c.name,
                c.info
         FROM 2code_code c, 2code_user u

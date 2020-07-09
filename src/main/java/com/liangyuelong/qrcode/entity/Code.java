@@ -27,7 +27,7 @@ public class Code {
      */
     private Integer viewNum;
 
-    private Long addressId;
+    private String addressId;
 
     /**
      * 二维码名称

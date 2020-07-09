@@ -85,8 +85,20 @@ var base_url = '//localhost:8091';
                 onSelect: function (v) {
                     $("#area").val(v.join())
                 }
-            })
-        })
+            });
+            var areaJson = JSON.parse(localStorage.getItem('areaJson'));
+            if (!areaJson) {
+                localStorage.setItem('areaJson', JSON.stringify({
+                    date: new Date().getDate(),
+                    json: res
+                }))
+            } else if (areaJson.date > new Date().getDate) {
+                localStorage.setItem('areaJson', JSON.stringify({
+                    date: new Date().getDate(),
+                    json: res
+                }))
+            }
+        });
 
         // 字段验证
         $("#qrcodeForm").validate({
@@ -114,7 +126,7 @@ var base_url = '//localhost:8091';
                     maxlength: "备注过长, 最多 16 个字符"
                 }
             }
-        })
+        });
     });
     start();
 })(jQuery);
@@ -276,49 +288,35 @@ function delete_code() {
 }
 
 function add_code() {
-    var u = localStorage.u;
-    if (!u) {
-        return swal('未登录, 请先登录')
+    var user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        swal('未登录, 请先登录');
+        return start();
     }
+    console.log(localStorage.getItem('user'));
+    console.log(localStorage.user);
+    console.log(localStorage.user.username);
     var $form = $("#qrcodeForm");
-    console.log(u);
     console.log($form);
     $form.ajaxSubmit({
         url: base_url + '/manage/add',
         type: "POST",
         datatype: "json",
-        clearForm: true,
-        data: {username: u.username},
+        resetForm: true,
+        data: {
+            userId: user.id,
+            username: user.username
+        },
         beforeSubmit: function () {
             return $form.valid();
         },
         success: function (data) {
-            checkError(data);
+            checkError(data, () => {
+                swal('添加成功');
+                location.reload();
+            });
         }
     })
-
-    // $.ajax({
-    //     url: base_url + '/manage/add',
-    //     method: "POST",
-    //     data: {
-    //         u: u,
-    //         c: c,
-    //         a: a,
-    //         n: n,
-    //         i: i
-    //     },
-    //     success: function success(msg) {
-    //         var data = JSON.parse(msg);
-    //         if (data.code == '1') {
-    //             $('#modal-form3').modal('show');
-    //             $('#modal-form3 .info_text').text('新增成功!');
-    //             location.reload();
-    //         } else {
-    //             $('#modal-form3').modal('show');
-    //             $('#modal-form3 .info_text').text('新增失败!');
-    //         }
-    //     }
-    // });
 }
 
 function login() {
@@ -326,13 +324,14 @@ function login() {
     var password = $('#password_g').val();
     $.cpost(base_url + '/login', {username: username, password: password}, function (id) {
         localStorage.u = username;
-        localStorage.user = {id: id, username: username};
+        localStorage.setItem('user', JSON.stringify({id: id, username:username}));
+        console.log(localStorage.getItem('user'));
         // 登录成功
         menu();
         $("#modal-form").modal('hide');
         $('.user').show();
         $('.un_user').hide();
-        $('.user_name').text(u);
+        $('.user_name').text(username);
     });
 }
 
@@ -352,82 +351,79 @@ function register() {
     });
 }
 
-function add_content(msg) {
+function add_content(dataList) {
     $('.code_info').remove();
-    var data = JSON.parse(msg);
-    if (data.code == '1') {
-        for (var i = 0; i < data.content.length; i++) {
-            var html = '';
-            var code_id = data.content[i].id;
-            var code_id2 = '';
-            if (code_id > 99) {
-                code_id2 = code_id;
-            } else if (code_id > 9 && code_id <= 99) {
-                code_id2 = '0' + code_id;
-            } else {
-                code_id2 = '00' + code_id;
-            }
-            html += '       <div class="col-md-6 col-sm-6 code_info">\n           <div class="media blog-thumb">\n              <div class="media-object media-left ele' + i + '">\n              </div>\n              <div class="media-body blog-info">\n                 <small><i class="fa fa-clock-o"></i>\u626B\u7801\u6B21\u6570:' + data.content[i].num + '</small>\n                 <h3><a href="javascript:void(0)">' + data.content[i].name + '</a></h3>\n                 <p>I D : ' + code_id2 + '</p>\n                 <p>\u7F51\u5740 : ' + data.content[i].content + '</p>\n                 <p>\u533A\u57DF : ' + (data.content[i].address || '无') + '</p>\n                 <p>\u5907\u6CE8 : ' + (data.content[i].info || '无') + '</p>\n                 <button class="btn section-btn" onclick=\'fix("' + encodeURI(data.content[i].id) + '","' + encodeURI(data.content[i].address) + '","' + encodeURI(data.content[i].name) + '","' + encodeURI(data.content[i].content) + '","' + encodeURI(data.content[i].info) + '")\'>\u4FEE\u6539</button>\n              </div>\n           </div>\n        </div>';
-            $('#code_b').append(html);
-            var ele = '.ele' + i;
-            var url = 'http:' + base_url + '/view?id=' + data.content[i].id + '&&qq=228322991&v=0.2.1';
-            paint(url, ele);
+    // 获取地区数据
+    var areaJson = JSON.parse(localStorage.getItem('areaJson'));
+    for (var i = 0; i < dataList.length; i++) {
+        var id = dataList[i].id;
+        var code_id2 = '';
+        if (id > 99) {
+            code_id2 = id;
+        } else if (id > 9 && id <= 99) {
+            code_id2 = '0' + id;
+        } else {
+            code_id2 = '00' + id;
         }
-    } else {
-        localStorage.u = '';
-        start();
+        var addressId = dataList[i].addressId;
+        var name = dataList[i].name;
+        var content = dataList[i].content;
+        var viewNum = dataList[i].viewNum;
+        var info = dataList[i].info;
+
+        var $div = $("<div class='col-md-6 col-sm-6 code_info'></div>");
+        var $thumb = $("<div class='media blog-thumb'></div>");
+        var $info = $("<div class='media-body blog-info picker'></div>")
+          .append(`<small><i class="fa fa-clock-o"></i>扫码次数: ${viewNum}</small>`)
+          .append(`<h3><a href="javascript: void(0)">${name}</a></h3>`)
+          .append(`<p>I D : ${code_id2}</p>`)
+          .append(`<p>网址: ${content}</p>`)
+          .append(`<p>备注: ${info ? info : '无'}</p>`)
+          .append(`<p id="area-${id}">无</p>`);
+        // 编辑按钮
+        var $button = $("<button class='btn section-btn'>编辑</button>").on("click", function () {
+            fix(id, addressId, name, content, info);
+        });
+        $info.append($button);
+        var url = 'http:' + base_url + '/view?id=' + dataList[i].id + '&&qq=228322991&v=0.2.1';
+        var $qrCode = $("<div class='media-object media-left ele0'></div>").qrcode({
+            render: "canvas", //也可以替换为table
+            width: 200,
+            height: 200,
+            text: url
+        });
+        $thumb.append($qrCode).append($info);
+        $div.append($thumb);
+        $('#code_b').append($div);
+        // 选中地区
+        if (addressId) {
+            let ids = addressId.split(',');
+            $(`#area-${id}`).iPicker({
+                data: areaJson.json,
+                level: ids.length,
+                disabled: [0, 1, 2],
+                defaultValue: ids,
+                width: 20,
+            })
+        }
     }
 }
 
 function menu() {
-    $.get(base_url + '/manage/content', {username: localStorage.u}, 'add_content');
+    console.log('menu');
+    $.cget(base_url + '/manage/content', {username: localStorage.u}, function (data) {
+        add_content(data);
+    });
 }
 
 function fix(id, a, n, c, i) {
     localStorage.i = id;
+    console.log("fix", id, a, n, c, i);
     $('#fix_address').val(decodeURI(a));
     $('#fix_name').val(decodeURI(n));
     $('#fix_url').val(decodeURI(c));
     $('#fix_info').val(decodeURI(i));
     $('#modal-form2').modal('show');
-}
-
-function paint(url, ele) {
-    outputQRCod(url, 200, 200); //转换中文字符串
-    function toUtf8(str) {
-        var out, i, len, c;
-        out = "";
-        len = str.length;
-        for (i = 0; i < len; i++) {
-            c = str.charCodeAt(i);
-            if (c >= 0x0001 && c <= 0x007F) {
-                out += str.charAt(i);
-            } else if (c > 0x07FF) {
-                out += String.fromCharCode(0xE0 | c >> 12 & 0x0F);
-                out += String.fromCharCode(0x80 | c >> 6 & 0x3F);
-                out += String.fromCharCode(0x80 | c >> 0 & 0x3F);
-            } else {
-                out += String.fromCharCode(0xC0 | c >> 6 & 0x1F);
-                out += String.fromCharCode(0x80 | c >> 0 & 0x3F);
-            }
-        }
-        return out;
-    }
-
-    //生成二维码
-    function outputQRCod(txt, width, height) {
-        //先清空
-        $(ele).empty();
-        //中文格式转换
-        var str = toUtf8(txt);
-        //生成二维码
-        $(ele).qrcode({
-            render: "canvas", //canvas和table两种渲染方式
-            width: width,
-            height: height,
-            text: str
-        });
-    }
 }
 
 function checkError(data, callback) {
