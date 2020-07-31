@@ -1,9 +1,12 @@
 package com.liangyuelong.qrcode.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liangyuelong.qrcode.common.BizException;
+import com.liangyuelong.qrcode.common.bean.model.UserModel;
 import com.liangyuelong.qrcode.common.form.user.RegisterForm;
+import com.liangyuelong.qrcode.common.form.user.UserForm;
 import com.liangyuelong.qrcode.dao.UserMapper;
 import com.liangyuelong.qrcode.entity.User;
 import com.liangyuelong.qrcode.service.UserService;
@@ -43,5 +46,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.error(ExceptionUtils.getStackTrace(e));
             throw new BizException("注册失败, 请重试");
         }
+    }
+
+    @Override
+    public Page<UserModel> pageList(UserForm form) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        Page<User> page = new Page<>();
+        page.setCurrent(form.getCurrentPage());
+        return null;
     }
 }

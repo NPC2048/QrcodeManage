@@ -1,7 +1,10 @@
 package com.liangyuelong.qrcode.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.liangyuelong.qrcode.common.bean.model.UserModel;
 import com.liangyuelong.qrcode.common.form.user.RegisterForm;
+import com.liangyuelong.qrcode.common.form.user.UserForm;
 import com.liangyuelong.qrcode.entity.User;
 
 /**
@@ -25,5 +28,7 @@ public interface UserService extends IService<User> {
      * @param form form
      */
     void register(RegisterForm form);
+
+    Page<UserModel> pageList(UserForm form);
 
 }
