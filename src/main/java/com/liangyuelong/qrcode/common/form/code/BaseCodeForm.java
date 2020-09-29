@@ -7,6 +7,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ * @author yuelong.liang
+ */
 @Data
 public abstract class BaseCodeForm {
 

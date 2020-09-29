@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * 二维码管理 controller
@@ -131,10 +130,16 @@ public class QrCodeManageController {
      *
      * @param id 二维码 id
      */
-    @PreAuthorize("authentication.details.id.equals(#id)")
+    @PreAuthorize("authentication.details.id.equals(#userId)")
     @PostMapping("/delete")
     @ResponseBody
-    public R delete(@Valid @NotNull(message = "id 不能为空") Long id) {
+    public R delete(Long userId, Long id) {
+        if (id == null) {
+            throw new NoLogException("id 不能为空");
+        }
+        if (id < 1) {
+            throw new NoLogException("id 不合法");
+        }
         if (!codeService.removeById(id)) {
             throw new NoLogException("删除二维码失败, 请重试");
         }

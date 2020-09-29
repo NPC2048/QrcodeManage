@@ -18,6 +18,7 @@
 </head>
 
 <body>
+    <input type="hidden" id="baseUrl" value="#{baseUrl}">
     <!-- PRE LOADER -->
     <section class="preloader">
         <div class="spinner">
@@ -236,12 +237,16 @@
                                     <h2>管理</h2>
                                 </div>
                                 <div role="tabpanel" class="tab-pane fade in" id="sign_in">
-                                    <form>
-                                        <input type="text" id="fix_name" autocomplete="off" class="form-control" name="name" placeholder="名称(必填)" required>
-                                        <input type="text" id="fix_url" autocomplete="off" class="form-control" name="url" placeholder="路径(必填)" required>
-                                        <input type="text" id="fix_info" autocomplete="off" class="form-control" name="url" placeholder="备注信息" required>
-                                        <input type="text" id="fix_address" autocomplete="off" class="form-control" name="address" placeholder="区域" required>
-                                        <input type="button" id="fix_code" class="form-control" name="submit" value="确定">
+                                    <form id="codeForm">
+                                        <input type="hidden" name="id" required>
+                                        <input type="text" autocomplete="off" class="form-control" name="name" placeholder="名称(必填)">
+                                        <input type="text" autocomplete="off" class="form-control" name="content" placeholder="路径(必填)">
+                                        <input type="text" autocomplete="off" class="form-control" name="info" placeholder="备注信息">
+                                        <div class="picker" style="margin-bottom: 65px">
+                                            <div id="addressId"></div>
+                                            <input id="codeArea" type="hidden" name="addressId">
+                                        </div>
+                                        <input type="button" id="codeUpdateBtn" class="form-control button" name="submit" value="确定">
                                         <input type="button" id="delete_code" class="form-control" name="submit" value="删除">
                                     </form>
                                 </div>

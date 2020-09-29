@@ -53,3 +53,4 @@ mybatis-plus:
     use-actual-param-name: true
     # 禁用缓存
     cache-enabled: false
+# 自定义配置
