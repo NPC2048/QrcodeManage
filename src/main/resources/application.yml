@@ -32,12 +32,7 @@ spring:
       password: npc2048@qq.com
   # 模板引擎配置
   freemarker:
-    # 后缀
-    suffix: .html
-    # 在模板文件里里使用 request 获取 request 信息, 如项目根路径等
-    request-context-attribute: request
-    # 检查模板位置，为了防止打印警告，选择关闭
-    check-template-location: false
+    suffix: .ftlh
 # mybatis-plus 配置
 mybatis-plus:
   global-config:

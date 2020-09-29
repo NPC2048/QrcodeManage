@@ -12,8 +12,9 @@
 </div>
 <script type="text/javascript">
     // 打开对应网址
+    alert("jump")
     setTimeout(() => {
-        location.assign('//${obj.content}');
+        location.assign('//');
     }, 1000)
 </script>
 </body>

@@ -35,28 +35,6 @@ public class QrCodeManageController {
     @Resource
     private CodeService codeService;
 
-    /**
-     * 查看二维码
-     * 只能查看自己的
-     *
-     * @param id 二维码 id
-     */
-    @PreAuthorize("principal.username.equals(#userService.getById(#id).username)")
-    @GetMapping(value = "/view")
-    public String view(Long id, ModelMap modelMap) {
-        if (id == null) {
-            throw new BizException("id 不能为空");
-        }
-        Code code = this.codeService.getById(id);
-        if (code == null) {
-            throw new BizException("该二维码不存在");
-        }
-        // 查看次数 +1
-        code.setViewNum(code.getViewNum() + 1);
-        this.codeService.updateById(code);
-        modelMap.put("obj", code);
-        return "jump";
-    }
 
     /**
      * 查询二维码

@@ -1,9 +1,7 @@
 package com.liangyuelong.qrcode.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -30,15 +28,5 @@ public class MybatisConfig implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-    }
-
-    /**
-     * 开启乐观锁插件
-     *
-     * @return OptimisticLockerInterceptor
-     */
-    @Bean
-    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
-        return new OptimisticLockerInterceptor();
     }
 }

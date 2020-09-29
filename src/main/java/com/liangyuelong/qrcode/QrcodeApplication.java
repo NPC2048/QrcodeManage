@@ -3,12 +3,12 @@ package com.liangyuelong.qrcode;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-@EnableConfigurationProperties
-@EnableAspectJAutoProxy
+/**
+ * 主启动类
+ *
+ * @author yuelong.liang
+ */
 @SpringBootApplication
 @MapperScan("com.liangyuelong.qrcode.dao")
 public class QrcodeApplication {
